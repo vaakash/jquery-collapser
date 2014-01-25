@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>jQuery Collapser tests</title>
+<script src="jquery.min.js"></script>
+<script src="../jquery.collapser.js"></script>
+
+<script>
+$(document).ready(function(){
+	$('.p1').collapser({
+		mode: 'chars',
+		truncate: 30
+	});
+	
+	$('.p2').collapser({
+		mode: 'block',
+		showText: 'Show paragraph',
+		hideText: 'Hide paragraph',
+		changeText: 1
+	});
+	
+	$('.p3 li').collapser({
+		mode: 'words',
+		truncate: 2,
+	});
+	
+});
+
+</script>
+
+<style>
+.show-class{
+	background: #f2f2f2;
+}
+.hide-class{
+	background: #fff;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Heading</h2>
+<p class="p1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<hr/>
+
+<h2>Block test</h2>
+
+<h3 class="p2">Click me to toggle below text</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<hr/>
+
+<ul class="p3">
+	<li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</li>
+	<li>Ut enim ad minim veniam, quis nostrud exercitation ullamco</li>
+	<li>sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+</ul>
+
+</body>
+</html>

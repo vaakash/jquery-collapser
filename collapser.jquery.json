@@ -1,0 +1,42 @@
+{
+    "name": "collapser",
+    "title": "jQuery Collapser",
+    "description": "jQuery Collapser is a small and useful jQuery plugin for collapsing/truncating an element text by words, characters and lines with a flexible API. It is an all in one plugin with multiple functionalities to truncate a paragraph or any element as desired. Tags: jquery, plugin, animation, effect, collapse, lines, words, characters, truncate, element, expand, shrink, text, paragraph, plugin, hide, show, slider",
+    "keywords": [
+        "jquery",
+        "animation",
+		"effect",
+		"collapse",
+		"lines",
+		"words",
+		"characters",
+		"truncate",
+		"element"
+		"expand",
+		"shrink",
+		"text",
+		"paragraph",
+		"plugin",
+		"hide",
+		"show",
+		"slider"
+    ],
+    "version": "2.0.0",
+    "author": {
+        "name": "Aakash Chakravarthy",
+        "url": "http://www.aakashweb.com/"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://opensource.org/licenses/mit-license.php"
+        }
+    ],
+    "bugs": "http://www.aakashweb.com/jquery-plugins/collapser/",
+    "homepage": "http://www.aakashweb.com/jquery-plugins/collapser/",
+    "docs": "http://www.aakashweb.com/docs/jquery-collapser-docs/",
+    "demo": "http://www.aakashweb.com/demos/jquery-collapser/",
+    "dependencies": {
+        "jquery": ">=1.7"
+    }
+}

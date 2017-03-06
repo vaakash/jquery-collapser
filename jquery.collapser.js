@@ -24,6 +24,7 @@
 			lockHide: false,
 			dynamic: false,
 			changeText: false,
+			escapeHtml: true,
 			beforeShow: null,
 			afterShow: null,
 			beforeHide: null,
@@ -48,13 +49,19 @@
 			
 			// Shorthand variables
 			s.mode = s.o.mode;
+			s.escapeHtml = s.o.escapeHtml;
 			s.remaining = {};
 			s.ctrlHtml = ' <a href="#" data-ctrl class="' + ( !$.isFunction(s.o.controlBtn) ? s.o.controlBtn : '' ) + '"></a>';
 	
 			$( s.e ).each(function(){
 				
 				// Store the original HTML in a data cache
-				$(this).data( 'oCnt', s.e.html() );
+				if( s.escapeHtml ){
+					$(this).data( 'oCnt', s.e.html() );
+				}else{
+					$(this).data( 'oCnt', s.e.text() );
+					s.e.html( s.e.text() );
+				}
 				
 				// Get the start type of the target element and activate the collapse
 				var atStart = $.isFunction( s.o.atStart ) ? s.o.atStart.call( s.e ) : s.o.atStart;
@@ -255,7 +262,13 @@
 					
 					// Calculate current height and new height
 					var eWrap = e.children( 'div' ).css( 'height', '' );
-					eWrap.html( eWrap.text() );
+					
+					// Escape HTML tags in the text
+					if ( s.escapeHtml )
+						eWrap.html( eWrap.text() );
+					else
+						eWrap.html( eWrap.html() );
+					
 					var height = eWrap.height();
 					
 					// Calculate line height from a new element and store in data cache

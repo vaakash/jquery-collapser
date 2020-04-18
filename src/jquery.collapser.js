@@ -1,28 +1,27 @@
 /* 
- * jQuery - Collapser - Plugin v2.0
- * http://www.aakashweb.com/
- * Copyright 2014, Aakash Chakravarthy
+ * jQuery - Collapser plugin v3.0
+ * https://www.aakashweb.com/
+ * Copyright 2020, Aakash Chakravarthy
  * Released under the MIT License.
  */
 
-;(function ( $, window, document, undefined ) {
+;(function ($, window, document, undefined) {
     
     var name = "collapser",
         defaults = {
-            target: 'next',
             mode: 'words',
             speed: 'slow',
             truncate: 10,
-            ellipsis: '...',
-            effect: 'fade',
-            controlBtn: '',
+            ellipsis: ' ... ',
+            controlBtn: null,
             showText: 'Show more',
             hideText: 'Hide text',
             showClass: 'show-class',
             hideClass: 'hide-class',
             atStart: 'hide',
+            blockTarget: 'next',
+            blockEffect: 'fade',
             lockHide: false,
-            dynamic: false,
             changeText: false,
             beforeShow: null,
             afterShow: null,
@@ -31,374 +30,326 @@
         };
 
     // Constructor
-    function Collapser( el, options ) {
+    function Collapser(el, options) {
         
-        var s = this;
+        var s = this; // The collapser class object
         
-        s.o = $.extend( {}, defaults, options );
-        s.e = $(el);
+        s.o = $.extend({}, defaults, options);
+        s.e = $(el); // The element to collapse
         s.init();
 
     }
     
     Collapser.prototype = {
+
         init: function(){
         
             var s = this;
             
-            // Shorthand variables
             s.mode = s.o.mode;
-            s.remaining = {};
-            s.ctrlHtml = ' <a href="#" data-ctrl class="' + ( !$.isFunction(s.o.controlBtn) ? s.o.controlBtn : '' ) + '"></a>';
-    
-            $( s.e ).each(function(){
-                
-                // Store the original HTML in a data cache
-                $(this).data( 'oCnt', s.e.html() );
-                
-                // Get the start type of the target element and activate the collapse
-                var atStart = $.isFunction( s.o.atStart ) ? s.o.atStart.call( s.e ) : s.o.atStart;
-                
-                atStart = ( typeof s.e.attr( 'data-start' ) !== 'undefined' ) ? s.e.attr( 'data-start' ) : atStart;
-                
-                if( atStart == 'hide' ){
-                    s.hide( s.e, 0 );
-                }else{
-                    s.show( s.e, 0 );
-                }
-                
-            });
-            
-            // Update the hidden lines on window resize
-            var rTimer;
-            $( window ).on( 'resize', function(){
-                if( s.o.dynamic && s.mode == 'lines' ){
-                    clearTimeout( rTimer );
-                    rTimer = setTimeout( function(){ 
-                        s.reInit( s.e );
-                    }, 100);
-                }
-            });
+            s.remaining = null;
+            s.ctrlButton = $.isFunction(s.o.controlBtn) ? s.o.controlBtn.call(s.e) : $('<a href="#" data-ctrl></a>');
 
+            if(s.mode == 'lines'){
+                s.e.wrapInner('<div>');
+            }
+
+            // Get the start type of the target element and activate the collapse
+            var atStart = $.isFunction(s.o.atStart) ? s.o.atStart.call(s.e) : s.o.atStart;
+            atStart = (typeof s.e.attr('data-start') !== 'undefined') ? s.e.attr('data-start') : atStart;
+            
+            if(atStart == 'hide'){
+                s.hide(0);
+            }else{
+                s.show(0);
+            }
+            
         },
         
         // SHOW METHOD
-        show: function( ele, speed ){
-            var s = this,
-                e = $( ele );
-                
-            if( typeof speed === 'undefined' ) speed = s.o.speed;
+        show: function(speed){
+
+            var s = this;
+            var e = s.e;
+
+            s.collapsed = false;
+
+            if(typeof speed === 'undefined') speed = s.o.speed;
+
+            if($.isFunction(s.o.beforeShow))
+                s.o.beforeShow.call(s.e, s);
             
-            // Callbacks
-            var callback = function(){
-                if( $.isFunction( s.o.afterShow ) )
-                    s.o.afterShow.call( s.e, s );
+            var afterShow = function(){
+                if($.isFunction(s.o.afterShow))
+                    s.o.afterShow.call(s.e, s);
             };
+
+            e.find('[data-ctrl]').remove();
             
-            if( $.isFunction( s.o.beforeShow ) )
-                s.o.beforeShow.call( s.e, s );
-            
-            switch( s.mode ){
-                case 'chars':
-                case 'words':
-                
-                    // Get the current height of the element
-                    var oHeight = e.height();
-                    
-                    // Replace the HTML with the original one and get the new height
-                    e.html( e.data('tHTML') );
-                    var nHeight	= e.height();
-                    
-                    // Animate the element height from old to new and update element classes
-                    e.height( oHeight );
-                    e.animate({
-                        'height': nHeight
-                    }, speed, function(){
-                        e.height( 'auto' );
-                        callback();
-                    }).removeClass( s.o.hideClass ).addClass( s.o.showClass );
-                    
-                    // Update the temporary HTML in the data cache
-                    e.data( 'tHTML', e.html() );
-                    
-                break;
-                
-                case 'lines':
-                
-                    // Wrap the inner elements with a div tag
-                    if( e.children('div').length == 0 )
-                        e.wrapInner( '<div>' );
-                    
-                    // Get current height and height after replacing content
-                    var eWrap = e.children( 'div' ),
-                        tHeight = eWrap.height(),
-                        getHeight = eWrap.html( e.data('oCnt') ).css( 'height', '' ).height(),
-                        setHeight = eWrap.css( 'height', tHeight );
-                    
-                    // Animate the element height from old to new and update the classes
-                    eWrap.animate({
-                        height: getHeight
-                    }, speed, function(){
-                        eWrap.height( 'auto' );
-                        callback();
-                    });
-                    
-                    e.removeClass( s.o.hideClass ).addClass( s.o.showClass )
-                
-                break;
-                
-                case 'block':
-                    
-                    // Call the special function this mode
-                    s.blockMode( e, 'show', speed, callback );
-                
-                break;
-                
-            }
-            
-            // Update the status variable to ON
-            s.status = 1;
-            
-            // Check whether to hide the control button after expand
-            if( s.o.lockHide == true ){
-                e.find( '[data-ctrl]' ).remove();
-                return '';
-            }
-            
-            // Update the on click event of the control button
-            if( s.mode == 'block' ){
-                
-                // For block mode
-                e.off('click.coll').on( 'click.coll', function( event ){
-                    event.preventDefault();
-                    s.hide( e );
-                });
-                
+            // Modes chars, words and lines follow the same sequence to show the collapsed data.
+            if(s.mode == 'block'){
+
+                s.blockMode(e, 'show', speed, afterShow);
+
             }else{
-            
-                // If there is no control button, add it
-                if( e.find( '[data-ctrl]' ).length == 0 && !$.isFunction( s.o.controlBtn ) ){
-                    e.append( s.ctrlHtml );
+
+                /*
+                    1. Get the current height when collapsed.
+                    2. Set the expanded content and get the height.
+                    3. Animate the element height from collapsed height to the expanded height.
+                */
+
+                var target = (s.mode == 'lines') ? e.children('div') : e; // For lines mode, the element to collapse is the inner wrapper div
+                var oldHeight = target.height();
+
+                if(s.mode == 'lines'){
+                    target.height('auto');
+                }else{
+                    var backupHTML = target.data('collHTML');
+                    if(typeof backupHTML !== 'undefined'){
+                        target.html(backupHTML);
+                    }
                 }
-                
-                // Bind the on click event of the control button
-                s.ctrlBtn = $.isFunction( s.o.controlBtn ) ? s.o.controlBtn.call( s.e ) : $( e.find( '[data-ctrl]' ) );
-                
-                s.ctrlBtn.off( 'click.coll' ).on( 'click.coll' , function( event ){
-                    event.preventDefault();
-                    s.hide( e );
-                }).html( s.o.hideText );
-            
+
+                var newHeight = target.height();
+
+                target.height(oldHeight);
+                target.animate({
+                    'height': newHeight
+                }, speed, function(){
+                    target.height('auto');
+                    afterShow();
+                });
+
+                e.removeClass(s.o.hideClass).addClass(s.o.showClass);
+
+                // Add the control button and set the display text
+                if(!$.isFunction(s.o.controlBtn)){
+                    e.append(s.ctrlButton);
+                }
+
+                s.ctrlButton.html(s.o.hideText);
+
             }
+
+            // Bind the click event for all the modes
+            s.bindEvent();
+
+            // Remove the control button if option is to hide it
+            if(s.o.lockHide){
+                s.ctrlButton.remove();
+            }
+
         },
         
         // HIDE METHOD
-        hide: function( ele, speed ){
-            
-            var s = this,
-                e = $( ele );
-                
-            if( typeof speed === 'undefined' ) speed = s.o.speed;
-            
-            // Callbacks
-            var callback = function(){
-                if( $.isFunction( s.o.afterHide ) )
-                    s.o.afterHide.call( s.e, s );
-            };
-            
-            if( $.isFunction( s.o.beforeHide ) )
-                s.o.beforeHide.call( s.e, s );
-            
-            // Remove the control button already present
-            e.find('[data-ctrl]').remove();
-            
-            switch( s.mode ){
-                case 'chars':
-                    
-                    // Get the text of the element and calculate the remaining chars
-                    var txt = $.trim(e.text());
-                    s.remaining['chars'] = txt.length - s.o.truncate;
-                    
-                    // Slice the text, hide the remaining text, add control button & update class
-                    if( txt.length > s.o.truncate ){
-                        e.data( 'tHTML', e.html() );
-                        txt = s.pad( txt.slice(0, s.o.truncate), txt.slice( s.o.truncate, txt.length) );
-                        e.html( txt ).removeClass( s.o.showClass ).addClass( s.o.hideClass );
-                        callback();
-                    }
-                    
-                break;
-                
-                case 'words':
-                
-                    // Get the no of words and calculate the remaining words
-                    var txt = $.trim(e.text()),
-                        stxt = txt.split( " " );
+        hide: function(speed){
 
-                    s.remaining['words'] = stxt.length - s.o.truncate;
-                    
-                    // Slice the text, hide the remaining text, add control button & update class
-                    if( stxt.length > s.o.truncate ){
-                        e.data( 'tHTML', e.html() );
-                        txt = s.pad( stxt.slice( 0, s.o.truncate ).join( " " ), stxt.slice( s.o.truncate, stxt.length ).join( " " ) );
-                        e.html( txt ).removeClass( s.o.showClass ).addClass( s.o.hideClass );
-                        callback();
-                    }
-                
-                break;
-                
-                case 'lines':
-                    
-                    // Wrap inner element with a div
-                    if( e.children('div').length == 0 )
-                        e.wrapInner( '<div>' );
-                    
-                    // Calculate current height and new height
-                    var eWrap = e.children( 'div' ).css( 'height', '' );
-                    eWrap.html( eWrap.text() );
-                    var height = eWrap.height();
-                    
-                    // Calculate line height from a new element and store in data cache
-                    if( typeof e.data( 'lHeight' ) === 'undefined' ){
-                        temp = eWrap.clone();
-                        lHeight = temp.text( 'a' ).insertAfter( eWrap ).height();
-                        e.data( 'lHeight', lHeight );
-                        eWrap.next().remove();
-                    }else{
-                        lHeight = e.data( 'lHeight' );
-                    }
-                    
-                    // Calculate no of lines
-                    lines = height/lHeight;
-                    s.remaining['lines'] = lines - s.o.truncate;
-                    
-                    // Hide remaining lines and update class
-                    if( s.remaining['lines'] > 0 ){
-                        
-                        eWrap.css( 'overflow', 'hidden' );
-                        
-                        eWrap.animate({ 
-                            height : lHeight * s.o.truncate 
-                        }, speed ).data( 'tHeight', height );
-                        
-                        e.removeClass( s.o.showClass ).addClass( s.o.hideClass );
-                        
-                        if( e.find( '[data-ctrl]' ).length == 0 && !$.isFunction( s.o.controlBtn ) ){
-                            e.append( s.ctrlHtml );
-                        }
-                        
-                        callback();
-                        
-                    }
-                    
-                break;
-                
-                case 'block':
-                    
-                    // Special function for block mode
-                    s.blockMode( e, 'hide', speed, callback );
-                
-                break;
-                
+            var s = this;
+            var e = s.e;
+
+            s.collapsed = true;
+
+            if(typeof speed === 'undefined') speed = s.o.speed;
+
+            if($.isFunction(s.o.beforeHide)){
+                s.o.beforeHide.call(s.e, s);
             }
-            
-            // Update the status variable
-            s.status = 0;
-            
-            // Update the events of the control button
-            if( s.mode == 'block' ){
-            
-                e.unbind( 'click.coll' ).bind( 'click.coll', function( event ){
-                    event.preventDefault();
-                    s.show( e );
+
+            var afterHide = function(){
+                if($.isFunction(s.o.afterHide))
+                    s.o.afterHide.call(s.e, s);
+            };
+
+            e.find('[data-ctrl]').remove();
+
+            // Mode - chars & words
+            if(s.mode == 'chars' || s.mode == 'words'){
+
+                var fullHTML = e.html();
+                var collapsedHTML = s.getCollapsedHTML(fullHTML, s.mode, s.o.truncate) // returns false if content is very small and cannot collapse.
+
+                if(collapsedHTML){
+                    e.data('collHTML', fullHTML);
+                    e.html(collapsedHTML);
+                    
+                    var plainText = e.text();
+                    s.remaining = plainText.split(s.mode == 'words' ? ' ' : '').length - s.o.truncate;
+                }else{
+                    s.remaining = 0;
+                }
+
+            }
+
+            // Mode - lines
+            if(s.mode == 'lines'){
+
+                var $wrapElement = e.children('div');
+                var originalHeight = $wrapElement.outerHeight();
+                var $lhChar = $wrapElement.find('[data-col-char]');
+
+                if($lhChar.length == 0){
+                    var $lhChar = $('<span style="display:none" data-col-char>.</span>');
+                    $wrapElement.prepend($lhChar);
+                }
+
+                var lineHeight = $lhChar.height();
+                var newHeight = (lineHeight * s.o.truncate) + lineHeight/4; // Adding quarter of line height to avoid cutting the line.
+
+                // If content is already small and criteria is already met then no need to collapse.
+                if(newHeight >= originalHeight){
+                    newHeight = 'auto';
+                    s.remaining = 0;
+                }else{
+                    s.remaining = parseInt(Math.ceil((originalHeight - newHeight)/lineHeight));
+                    console.log(s.remaining);
+                }
+
+                $wrapElement.css({
+                    'overflow': 'hidden',
+                    'height': newHeight
                 });
+
+            }
+
+            // Mode - block
+            if(s.mode == 'block'){
+                s.blockMode(e, 'hide', speed, afterHide);
+            }
+
+            afterHide();
+
+            if(s.mode != 'block'){
+
+                e.removeClass(s.o.showClass).addClass(s.o.hideClass);
+
+                // Add the control button and set the display text
+                if(!$.isFunction(s.o.controlBtn) && s.remaining > 0){
+                    e.append(s.ctrlButton);
+                }
+
+                s.ctrlButton.html(s.o.showText);
+            }
+
+            // Bind the click event for all the modes
+            s.bindEvent();
+
+        },
+
+        blockMode: function(e, type, speed, callback){
+            var s = this
+            var effects = ['fadeOut', 'slideUp', 'fadeIn', 'slideDown'];
+            var inc = (s.o.blockEffect == 'fade') ? 0 : 1;
+            var effect = (type == 'hide') ? effects[inc] : effects [inc + 2];
             
+            if(!$.isFunction(s.o.blockTarget)){
+                if($.fn[s.o.blockTarget])
+                    $(e)[s.o.blockTarget]()[effect](speed, callback);
             }else{
+                s.o.blockTarget.call(s.e)[effect](speed, callback);
+            }
             
-                s.ctrlBtn = $.isFunction( s.o.controlBtn ) ? s.o.controlBtn.call( s.e ) : $( e.find( '[data-ctrl]' ) );
-                
-                s.ctrlBtn.off('click.coll').on('click.coll', function( event ){
-                    event.preventDefault();
-                    s.show( e );
-                }).html( s.o.showText );
-                
-                // Replace the %s with the remaining chars/words/lines count
-                var sText = s.o.showText;
-                var plural = {
-                    'chars' : [ 'character', 'characters' ],
-                    'words' : [ 'word', 'words' ],
-                    'lines' : [ 'lines', 'lines' ]
-                };
-                var toReplace = s.remaining[s.mode] + ( s.remaining[s.mode] == 1 ? ' ' + plural[s.mode][0] : ' ' + plural[s.mode][1] );
-                
-                sText = sText.replace('%s', toReplace);
-                
-                s.ctrlBtn.html( sText );
-                
+            if(type == 'show'){
+                e.removeClass(s.o.showClass).addClass(s.o.hideClass);
+                if(s.o.changeText)
+                    e.text(s.o.hideText);
+            }else{
+                e.removeClass(s.o.hideClass).addClass(s.o.showClass);
+                if(s.o.changeText)
+                    e.text(s.o.showText);
             }
             
         },
-        
-        // Method used by chars and word modes
-        pad: function( a, b ){
+
+        getCollapsedHTML: function(fullHTML, mode, truncateAt){
+            var inTag = false;
+            var itemsFound = 0;
+            var slicePoint = 0;
+            var hasLessItems = true;
+
+            // Iterate over the full HTML and find the point to break the HTML.
+            for(var i = 0; i <= fullHTML.length; i++){
+
+                char = fullHTML.charAt(i);
+                if(char == '<') inTag = true;
+                if(char == '>') inTag = false;
+                
+                if(itemsFound == truncateAt){
+                    slicePoint = i;
+                    hasLessItems = false;
+                    break;
+                }
+
+                if(!inTag){
+                    if(mode == 'words' && char == ' '){
+                        itemsFound++;
+                    }
+                    if(mode == 'chars'){
+                        itemsFound++;
+                    }
+                }
+
+            }
+
+            if(hasLessItems)
+                return false;
+
+            var slicedHTML = fullHTML.slice(0, slicePoint);
+            var balancedHTML = this.balanceTags(slicedHTML);
+
+            return balancedHTML + '<span class="coll-ellipsis">' + this.o.ellipsis + '</span>';
+        },
+
+        balanceTags: function(string){
+            // Thanks to https://osric.com/chris/javascript/balance-tags.html
+
+            if (string.lastIndexOf("<") > string.lastIndexOf(">")) {
+                string = string.substring(0, string.lastIndexOf("<"));
+            }
+
+            var tags = string.match(/<[^>]+>/g);
+            var stack = new Array();
+            for (tag in tags) {
+                if (tags[tag].search("/") <= 0) {
+                    stack.push(tags[tag]);
+                } else if (tags[tag].search("/") == 1) {
+                    stack.pop();
+                } else {
+                }
+            }
+
+            while (stack.length > 0) {
+                var endTag = stack.pop();
+                endTag = endTag.substring(1,endTag.search(/[>]/));
+                string += "</" + endTag + ">";
+            }
+
+            return(string);
+        },
+
+        bindEvent: function(){
             var s = this;
-            return a + '<span class="coll-ellipsis">' + s.o.ellipsis + '</span>' + ( !$.isFunction( s.o.ctrlBtn ) ? s.ctrlHtml : '' ) + '<span class="coll-hidden" style="display:none">' + b + '</span>';
-        },
-        
-        // Method for block mode
-        blockMode: function( e, type, speed, cb ){
-            
-            var s = this,
-                effects = [ 'fadeOut', 'slideUp', 'fadeIn', 'slideDown' ],
-                inc = ( s.o.effect == 'fade' ) ? 0 : 1,
-                effect = ( type == 'hide' ) ? effects[ inc ] : effects [ inc + 2 ];
-                        
-            if( !$.isFunction( s.o.target ) ){
-                if( $.fn[ s.o.target ] )
-                    $( e )[ s.o.target ]()[ effect ]( speed, cb );
-            }else{
-                s.o.target.call( s.e )[ effect ]( speed, cb );
-            }
-            
-            if( type == 'show' ){
-                e.removeClass( s.o.showClass ).addClass( s.o.hideClass );
-                if( s.o.changeText )
-                    e.text( s.o.hideText );
-            }else{
-                e.removeClass( s.o.hideClass ).addClass( s.o.showClass );
-                if( s.o.changeText )
-                    e.text( s.o.showText );
-            }
-            
-        },
-        
-        reInit: function( e ){
-            
-            var s = this;
-            
-            // Remove the control button
-            e.find( '[data-ctrl]' ).remove();
-            
-            // Switch the content to the original one
-            if( s.mode == 'chars' || 'words' ){
-                e.html( s.e.data( 'oCnt' ) );
-            }
-            
-            // Collapse as per previous status
-            if( s.status == 0 ) s.hide( e, 0 );
-            else s.show( e, 0 );
-            
+            var target = (s.mode == 'block') ? s.e : s.ctrlButton; // If mode is block, then the selector itself is the target not the control button
+
+            target.off('click').on('click', function(event){
+                event.preventDefault();
+                if(s.collapsed){
+                    s.show();
+                }else{
+                    s.hide();
+                }
+            });
         }
-        
+
     };
 
     // Attach the object to the DOM
-    $.fn[name] = function ( options ) {
+    $.fn[name] = function (options) {
         return this.each(function () {
             if (!$.data(this, name)) {
-                $.data(this, name, new Collapser( this, options ));
+                $.data(this, name, new Collapser(this, options));
             }
         });
     };
 
-})( jQuery, window, document );
+})(jQuery, window, document);

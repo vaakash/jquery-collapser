@@ -3,66 +3,437 @@
 <head>
 <meta charset="utf-8">
 <title>jQuery Collapser tests</title>
-<script src="jquery.min.js"></script>
-<script src="../jquery.collapser.js"></script>
-
-<script>
-$(document).ready(function(){
-	$('.p1').collapser({
-		mode: 'words',
-		truncate: 5,
-		controlBtn: function(){
-			return $('em');
-		}
-	});
-	
-	$('.p2+p').collapser({
-		mode: 'lines',
-		showText: 'Show paragraph',
-		hideText: 'Hide paragraph',
-		changeText: 1
-	});
-	
-	$('.p3 li').collapser({
-		mode: 'words',
-		truncate: 2,
-	});
-	
-});
-
-</script>
-
-<style>
-.show-class{
-	background: #f2f2f2;
-}
-.hide-class{
-	background: #fff;
-}
-</style>
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../src/jquery.collapser.js"></script>
 
 </head>
 <body>
-<em>Hey</em>
-<em>Hey</em>
-<em>Hey</em>
-<h2>Heading</h2>
-<p class="p1">Lorem <span><i>ipsum</i> <b>this is a test </b>dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</span>s ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-<hr/>
+<script>
+    $(document).ready(function(){
+    
+        $('.demo1').collapser({
+            mode: 'chars',
+            truncate: 30
+        });
+        $('.demo2').collapser({ 
+            mode: 'words',
+            truncate: 10,
+            ellipsis: ' <b>[MORE TEXT]</b> '
+        });
+        $('.demo3').collapser({
+            mode: 'lines',
+            truncate: 2
+        });
+        $('.demo4').collapser({
+            mode: 'block',
+            blockTarget: 'next'
+        });
+        
+        $('.demo5').collapser({
+            mode: 'lines',
+            truncate: 2,
+            hideText: 'Hide the above lines, they are long ...',
+            showClass: 'bRed',
+            hideClass: 'bGreen',
+            afterHide: function(q){
+                q.o.showText = 'Show the remaining ' + q.remaining + ' lines';
+            }
+        });
+        
+        $('.demo6').collapser({
+            mode: 'words',
+            truncate: 30,
+            showText: 'There are still <b>%s</b>, click to show',
+            hideText: 'Hide ^^^',
+        });
+        
+        $('.demo7').collapser({
+            mode: 'chars',
+            truncate: 50,
+            controlBtn: function(){
+                return $(this).prev().find( '.demo7-ctrl' );
+            },
+            showText: 'Expand the paragraph below'
+        });
+        
+        $('.demo8').collapser({
+            mode: 'lines',
+            truncate: 2
+        });
+        
+        $('.demo9').collapser({
+            mode: 'chars',
+            truncate: 30,
+            lockHide: true
+        });
+        
+        $('.demo10').collapser({
+            mode: 'words',
+            truncate: 5,
+            atStart: 'show'
+        });
+        
+        $('.demo11 li').collapser({
+            mode: 'words',
+            truncate: 3
+        });
+        
+        $('.demo12').collapser({
+            mode: 'words',
+            truncate: 10,
+            beforeShow: function(){
+                console.log( 'Before show' );
+            },
+            afterShow:  function(){
+                console.log( 'After show' );
+            },
+            beforeHide:  function(){
+                console.log( 'Before hide' );
+            },
+            afterHide:  function(){
+                console.log( 'After hide' );
+            },
+        });
+        
+    });
+</script>
+    
+<style>
 
-<h2>Block test</h2>
+    p{
+        outline: 1px solid blue;
+        padding: 15px;
+    }
+    .container > h3{
+        margin: 0 0 2rem 0;
+        color: #B30000;
+        font-weight: bold;
+    }
+    .bRed{
+        border: 1px solid red;
+    }
+    .bGreen{
+        border: 1px solid green;
+    }
+    .show-class{
+        background-color: aliceblue;
+    }
+    .hide-class{
+        background-color: beige;
+    }
+</style>
 
-<h3 class="p2">Click me to toggle below text</h3>
-<p style="font-size: 25px; line-height: 1.5;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<h2 id="basic">Basic</h2>
+<p>These are some of the basic examples of the plugin demonstrating the 4 different modes (character, words, lines and show/hide element) of usage of the plugin. The element can anything with HTML content. The HTML content is preserved during the toggle.</p>
 
-<hr/>
+<h3>Demo 1: Truncate characters to 30</h3>
+<p class="demo1">Lorem ipsum <strong>dolor</strong> sit amet, <s>consectetur</s> adipisicing elit, sed do eiusmod <em>tempor</em> incididunt ut labore et dolore magna aliqua. Ut enim ad <code>minim veniam</code>, quis 😀 nostrud exercitation <u>ullamco</u> laboris nisi ut <strong>aliquip</strong> ex ea commodo consequat. Duis aute irure dolor in <strong>reprehenderit</strong> in <em>voluptate</em> velit esse <em>cillum</em> dolore eu fugiat nulla pariatur.</p>
 
-<ul class="p3">
-	<li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</li>
-	<li>Ut enim ad minim veniam, quis nostrud exercitation ullamco</li>
-	<li>sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+
+
+<h3>Demo 2: Truncate words to 10</h3>
+<p class="demo2">Lorem ipsum <strong>dolor</strong> sit amet, <s>consectetur</s> adipisicing elit, sed do eiusmod <em>tempor</em> incididunt ut labore et dolore magna aliqua. Ut enim ad <code>minim veniam</code>, quis 😀 nostrud exercitation <u>ullamco</u> laboris nisi ut <strong>aliquip</strong> ex ea commodo consequat. Duis aute irure dolor in <strong>reprehenderit</strong> in <em>voluptate</em> velit esse <em>cillum</em> dolore eu fugiat nulla pariatur.</p>
+
+
+
+<h3>Demo 3: Truncate lines to 2</h3>
+<p class="demo3">Lorem ipsum dolor sit 😀 amet, <em>consectetur</em> adipisicing elit, sed do eiusmod tempor <u>incididunt</u> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Click me to show/hide the paragraph element below</p>
+
+
+
+<h3>Demo 4: Show/hide element</h3>
+<a class="demo4 btn btn-default">Click me to show/hide the paragraph element below</a>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+
+<h2 id="custom-buttons">Custom buttons, classes and displaying remaining chars/words/lines count</h2>
+<p>The <b>Show text</b> and <b>Hide text</b> buttons can be completely changed as required. The remaining string count can be added using the <code>%s</code> in the value.</p>
+
+
+
+<h3>Demo 5: Display remaining count, custom button text and and custom class</h3>
+<p class="demo5">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+
+
+<h3>Demo 6: Display remaining count - example 2</h3>
+<p class="demo6">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+
+
+<h3>Demo 7: Custom button</h3>
+<h3><b>The control button is here: <a class="demo7-ctrl">Toggle button</a></b></h3>
+<p class="demo7">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+
+<hr/> <!---------------------------------------------------------------------------------------->
+
+<h2 id="block-level">Block level child elements</h2>
+<p>The target element can have block elements also. Their text will only be taken for truncating.</p>
+
+<h3>Demo 8: Multiple block level child elements</h3>
+<div class="demo8">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    
+    <img src="https://dummyimage.com/320x160/000/fff" />
+    
+    <h2>Youtube video</h2>
+    
+    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+    
+</div>
+
+<hr/> <!---------------------------------------------------------------------------------------->
+
+<h2 id="lock-hide">Hide control button after expand</h2>
+<p>The control button can be made to use only once. i.e once the content is expanded, it cannot be collapsed. This is done using the <code>lockHide</code> property.</p>
+
+<h3>Demo 9: Lock hide</h3>
+<p class="demo9">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+
+<hr/> <!---------------------------------------------------------------------------------------->
+
+<h2 id="at-start">Expand the content by default</h2>
+<p>Expand the content by default instead of hiding them. This is done using the <code>atStart</code> property. Also, instead of this property <code>data-start="show"</code> attribute can be added to the element.</p>
+
+
+
+<h3>Demo 10: Expand by default, using <code>atStart</code></h3>
+<p class="demo10">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+
+
+<h3>Demo 11: Expand by default, using <code>data-start="show"</code></h3>
+<ul class="demo11">
+    <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</li>
+    <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco</li>
+    <li data-start="show">I'm shown by default. sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+    <li data-start="show">I'm shown by default.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</li>
+    <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco</li>
+    <li data-start="show">I'm shown by default.sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
 </ul>
+
+<hr/> <!---------------------------------------------------------------------------------------->
+
+<h2>Callbacks</h2>
+<p>View the console to check the functions callbacks triggered.</p>
+
+<h3>Demo 12: Callbacks</h3>
+<p class="demo12">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+<hr/> <!------------------------------------------------------------------------>
+
+<script>
+    $(document).ready(function(){
+    
+        $('.gpwrap .gppost').collapser({
+            mode: 'lines',
+            truncate: 5,
+            afterHide: function(col){
+                col.o.showText = 'Read more (' + col.remaining + ' lines)'
+            }
+        });
+        
+        $('.acc-head').collapser({
+            mode: 'block',
+            target: 'next',
+            effect: 'slide',
+            beforeShow: function( ){
+                $('.acc-head').each( function(){
+                    var dataVar = $(this).data('collapser'); 
+                    if( dataVar ) dataVar.hide();
+                });
+            }
+        });
+        
+        $('.cmt-box p').collapser({
+            mode: 'words',
+            truncate: 10
+        });
+        
+        $('.col-tree a').collapser({
+            mode: 'block',
+            effect: 'slide',
+            showClass: 'col-tree-show',
+            hideClass: 'col-tree-hide',
+        });
+        
+    });
+</script>
+
+<h2>Practical examples</h2>
+
+<h3 id="googleplus">Google+ like expand post feature using collapser</h3>
+
+<div class="gpwrap col-md-6">
+    <img src="https://lh6.googleusercontent.com/-oDY5lt3j20o/AAAAAAAAAAI/AAAAAAAAAAA/LIaSRRwrnB4/s32-c/photo.jpg" /> <b>Aakash Chakravarthy</b>
+    <small>Posted 2 days ago</small>
+    <hr/>
+    <div class="gppost"><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></div>
+</div>
+
+<style>
+.gpwrap{
+    border: 1px solid #CCC;
+    padding: 15px;
+    margin: 25px 0;
+    box-shadow: 0 0 6px -2px #000;
+}
+.gpwrap p{
+    margin: 0 0 25px 0;
+}
+.gppost.hide-class > div{
+    position: relative;
+}
+.gppost.hide-class > div:after{
+    position: absolute;
+    content: '';
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient( rgba(255,255,255,0), #fff);
+}
+</style>
+
+<h3 id="accordion">Simple accordion using collapser in "block" mode</h3>
+<p>A simple demonstration of how collapser can be turned into an accordion using its API in 2 lines of code</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <h4 class="acc-head" data-start="show">Heading 1</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h4 class="acc-head">Heading 2</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h4 class="acc-head">Heading 3</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+        <h4 class="acc-head">Heading 4</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+    </div>
+</div>
+
+<style>
+.acc-head{
+    background: #FF3333;
+    color: #fff;
+    padding: 10px;
+    margin: 0 0 1px 0;
+    cursor: pointer;
+}
+.acc-head.hide-class{
+    background: green;
+}
+.acc-head + p{
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-width: 0 1px 1px 1px;
+    margin: 0;
+}
+</style>
+
+<h3 id="cmnts">Comments collapser in blogs</h3>
+
+<div class="cmt-box">
+    <img src="http://0.gravatar.com/avatar/1?s=64&d=wavatar" class="pull-left" />
+    <h4>Aakash Chakravarthy</h4>
+    <small>15 01 2014</small>
+    <hr/>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+
+<div class="cmt-box">
+    <img src="http://0.gravatar.com/avatar/2?s=64&d=wavatar" class="pull-left" />
+    <h4>Aakash Chakravarthy</h4>
+    <small>16 01 2014</small>
+    <hr/>
+    <p>Nice one</p>
+</div>
+
+<div class="cmt-box">
+    <img src="http://0.gravatar.com/avatar/3?s=64&d=wavatar" class="pull-left" />
+    <h4>Aakash Chakravarthy</h4>
+    <small>17 01 2014</small>
+    <hr/>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+</div>
+
+<style>
+.cmt-box{
+    border: 1px solid #CCC;
+    padding: 15px;
+    background: #FCFCFC;
+    margin: 0 0 10px 0;
+}
+.cmt-box h4{
+    font-weight: bold;
+}
+.cmt-box img {
+    margin: 0 15px 0 0;
+    float: left;
+}
+.cmt-box p{
+    margin: 0;
+}
+</style>
+
+
+<h3 id="treenav">Simple tree navigation using block mode of collapser</h3>
+
+<ul class="col-tree">
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>Duis aute irure dolor</li>
+    <li><a href="#">sed do eiusmod tempor</a>
+        <ul>
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Duis aute irure dolor</li>
+            <li><a href="#">sed do eiusmod tempor</a>
+                <ul>
+                    <li>Lorem ipsum dolor sit amet</li>
+                    <li><a href="#">sed do eiusmod tempor</a>
+                            <ul>
+                                <li>Lorem ipsum dolor sit amet</li>
+                                <li>Duis aute irure dolor</li>
+                                <li>Lorem ipsum dolor sit amet</li>
+                            </ul>
+                        </li>
+                    <li>Lorem ipsum dolor sit amet</li>
+                </ul>
+            </li>
+            <li>Lorem ipsum dolor sit amet</li>
+        </ul>
+    </li>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li><a href="#">sed do eiusmod tempor</a>
+        <ul>
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Duis aute irure dolor</li>
+            <li>Lorem ipsum dolor sit amet</li>
+        </ul>
+    </li>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li><a href="#">sed do eiusmod tempor</a>
+        <ul>
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Duis aute irure dolor</li>
+            <li>Lorem ipsum dolor sit amet</li>
+        </ul>
+    </li>
+</ul>
+
+<style>
+.col-tree li{
+    padding: 5px 0;
+}
+.col-tree-show{
+    padding: 0 0 0 20px;
+}
+.col-tree-hide{
+    padding: 0 0 0 20px;
+}
+</style>
 
 </body>
 </html>

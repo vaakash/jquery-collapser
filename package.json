@@ -1,0 +1,36 @@
+{
+  "name": "jquery-collapser",
+  "version": "3.0.0",
+  "description": "jQuery collapser is a small and useful jQuery plugin for collapsing/truncating an element text by words, characters and lines. It is an all in one plugin with multiple functionalities to truncate a paragraph or any element as desired.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaakash/jquery-collapser.git"
+  },
+  "keywords": [
+    "jquery",
+    "jquery-plugin",
+    "collapse",
+    "expand",
+    "shrink",
+    "lines",
+    "words",
+    "characters",
+    "truncate"
+  ],
+  "author": "Aakash Chakravarthy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vaakash/jquery-collapser/issues"
+  },
+  "homepage": "https://github.com/vaakash/jquery-collapser#readme",
+  "dependencies": {
+    "jquery": "^3.5.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.1.0",
+    "grunt-contrib-uglify": "^4.0.1"
+  }
+}

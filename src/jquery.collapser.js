@@ -170,11 +170,11 @@
                 var collapsedHTML = s.getCollapsedHTML(fullHTML, s.mode, s.o.truncate) // returns false if content is very small and cannot collapse.
 
                 if(collapsedHTML){
-                    e.data('collHTML', fullHTML);
-                    e.html(collapsedHTML);
-                    
                     var plainText = e.text();
                     s.remaining = plainText.split(s.mode == 'words' ? ' ' : '').length - s.o.truncate;
+
+                    e.data('collHTML', fullHTML);
+                    e.html(collapsedHTML);
                 }else{
                     s.remaining = 0;
                 }
@@ -202,7 +202,6 @@
                     s.remaining = 0;
                 }else{
                     s.remaining = parseInt(Math.ceil((originalHeight - newHeight)/lineHeight));
-                    console.log(s.remaining);
                 }
 
                 $wrapElement.css({

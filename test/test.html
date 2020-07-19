@@ -46,6 +46,9 @@
             truncate: 30,
             showText: 'There are still <b>%s</b>, click to show',
             hideText: 'Hide ^^^',
+            afterHide: function(q){
+                q.o.showText = 'Show the remaining ' + q.remaining + ' words';
+            }
         });
         
         $('.demo7').collapser({

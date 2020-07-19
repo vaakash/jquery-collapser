@@ -1,5 +1,5 @@
 /* 
- * jQuery - Collapser plugin v3.0
+ * jQuery - Collapser plugin v3.0.1
  * https://www.aakashweb.com/
  * Copyright 2020, Aakash Chakravarthy
  * Released under the MIT License.

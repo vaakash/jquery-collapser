@@ -109,7 +109,7 @@ Like this plugin ? If you find it useful and if it helped solved your problem, f
 
 ## Documentation
 
-Plugin's documentation is available in the plugin homepage. Please refer [this page](https://www.aakashweb.com/docs/jquery-collapser-docs/) for more details on usage, options and customization features.
+Plugin's documentation is available in the plugin homepage. Please refer [this page](https://www.aakashweb.com/docs/jquery-collapser/) for more details on usage, options and customization features.
 
 ## Requirements
 
